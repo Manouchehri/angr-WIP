@@ -65,7 +65,7 @@ def hook_gmpz(state):
 #                     with said simprocedures.
 # p = angr.Project('antena', use_sim_procedures=True)
 # p = angr.Project('antena', load_options={"auto_load_libs": False})
-p = angr.Project('antena')
+p = angr.Project('antena_bffb7c0bfe9d5eac2e1364ce7ceb995e')
 
 
 # Lazy solves: LAZY_SOLVES should be disabled
@@ -79,6 +79,7 @@ init = p.factory.blank_state(addr=main)
 p.hook(0x400f3f, func=hook_fgets_printf, length=(0x400f69 - 0x400f3f))
 
 # Patch gmpz
+# Only need to find which length to give the password
 p.hook(0x400faf, func=hook_gmpz, length=(0x400fd2 - 0x400faf))
 
 # Hook strlen
