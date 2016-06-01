@@ -51,6 +51,8 @@ print("Registers set")
 pgp = p.factory.path_group(init, threads=8)
 
 ex = pgp.explore(find=win, avoid=fail)
+# Maybe we could use a function instead of an address; possibly a function that uses gdb to check if the path gives the flag?
+# https://github.com/angr/angr-doc/pull/66#issuecomment-222592558
 
 print(ex)
 
