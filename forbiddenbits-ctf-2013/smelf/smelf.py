@@ -18,10 +18,10 @@ p = angr.Project('smelf.bin')
 init = p.factory.blank_state(addr=main)
 argv=['smelf.bin', init.se.BVS('arg1', PASS_LEN * 8)]
 
-for i in xrange(PASS_LEN):
-    init.add_constraints(argv[1].get_byte(i) >= 0x20)
-    init.add_constraints(argv[1].get_byte(i) <= 0x7f)
-init.add_constraints(argv[1].get_byte(PASS_LEN) == 0)
+#for i in xrange(PASS_LEN):
+#    init.add_constraints(argv[1].get_byte(i) >= 0x20)
+#    init.add_constraints(argv[1].get_byte(i) <= 0x7f)
+#init.add_constraints(argv[1].get_byte(PASS_LEN) == 0)
 
 
 init.memory.store(0xd0000000, argv[0])
