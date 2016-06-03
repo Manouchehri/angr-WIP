@@ -1,7 +1,12 @@
-#!/usr/bin/python2
+
+# coding: utf-8
+
+# In[ ]:
 
 import angr
 
+
+# In[ ]:
 
 fail = (0x400947, 0x400958)
 win  = (0x400936,)
@@ -14,45 +19,70 @@ main = 0x400886
 # heap_end    = 0x623000
 # breakpoint  = 0x400909
 
-def patch_fgets(state):
-    addr = state.regs.rsi.args[0]
-    length = state.regs.rdi.args[0]
-    print("{0} bytes read at {1}".format(addr, hex(length)))
-    for x in xrange(length):
-        state.mem[addr + x:] = state.se.BVS('c', 8)
+path_types = [ 
+    #'avoid',
+    'errored',
+    'deadended',
+    'found',
+    #'pruned',
+    'stashed',
+    'unconstrained',
+    'unsat'
+]
 
+def get_length(state):
+    global flag_addr
+    flag_addr = state.regs.rax
+    print(flag_addr)
+    state.regs.rsi = 8
+    
+def print_paths(ex, trace=False):
+    for p_type in path_types:
+        for path in getattr(ex, p_type):
+            print("")
+            print("{0}: {1}".format(p_type, path))
+            if p_type == 'errored':
+                print("Error: {0}".format(path.error))
+            if trace:
+                for step in path.trace:
+                    print(step)
+
+
+# In[ ]:
 
 p = angr.Project('r200.bin')
-p.hook(0x40091c, func=patch_fgets, length=5)
+p.hook(0x400914, func=get_length, length=5)
 
 
+# In[ ]:
 
-init = p.factory.blank_state()
+init = p.factory.blank_state(addr=main)
+
+# init.gdb.set_stack('assets/stack', stack_top=0x7ffffffde000)
+# print("Stack set")
+
+# init.gdb.set_heap('assets/heap', heap_base=0x602000)
+# print("Heap set") 
+
+# # https://github.com/angr/simuvex/blob/efa097d4076401cbd48277223e1340d7c6dffbc1/simuvex/plugins/gdb.py#L97
+# # Some registers such as cs, ds, eflags etc. aren't supported in Angr
+# init.gdb.set_regs('assets/regs')
+# print("Registers set")
 
 
-# b * XXXXXXX
-# info proc mapping
-# dump binary memory stack addr
-# dump binary memory heap addr
-# info registers
-
-init.gdb.set_stack('binaries/r200/stack', stack_top=0x7ffffffde000)
-print("Stack set")
-
-init.gdb.set_heap('binaries/r200/heap', heap_base=0x602000)
-print("Heap set")
-
-# https://github.com/angr/simuvex/blob/efa097d4076401cbd48277223e1340d7c6dffbc1/simuvex/plugins/gdb.py#L97
-# Some registers such as cs, ds, eflags etc. aren't supported in Angr
-init.gdb.set_regs('binaries/r200/regs')
-print("Registers set")
-
+# In[ ]:
 
 pgp = p.factory.path_group(init, threads=8)
 
-ex = pgp.explore(find=win, avoid=fail)
-# Maybe we could use a function instead of an address; possibly a function that uses gdb to check if the path gives the flag?
-# https://github.com/angr/angr-doc/pull/66#issuecomment-222592558
 
+# In[ ]:
+
+ex = pgp.explore(find=win, avoid=fail)
+print_paths(ex, trace=True)
 print(ex)
+
+
+# In[ ]:
+
+
 
