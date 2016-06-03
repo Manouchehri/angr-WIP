@@ -62,7 +62,7 @@ patch_strlen = [0x5e, 0xaa, 0xe2, 0x150, 0x1d1, 0x20e, 0x258, 0x36a, 0x39f]
 
 # In[ ]:
 
-p = angr.Project('binaries/{}'.format(BINARY))
+p = angr.Project(BINARY)
 
 # Sleeps
 for x in patch_me_abs:
