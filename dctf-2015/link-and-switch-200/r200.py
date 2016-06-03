@@ -5,6 +5,8 @@
 
 import angr
 
+# DCTF13 - r200
+# @author: P1kachu
 
 # In[ ]:
 
@@ -19,7 +21,7 @@ main = 0x400886
 # heap_end    = 0x623000
 # breakpoint  = 0x400909
 
-path_types = [ 
+path_types = [
     #'avoid',
     'errored',
     'deadended',
@@ -35,7 +37,7 @@ def get_length(state):
     flag_addr = state.regs.rax
     print(flag_addr)
     state.regs.rsi = 8
-    
+
 def print_paths(ex, trace=False):
     for p_type in path_types:
         for path in getattr(ex, p_type):
@@ -62,7 +64,7 @@ init = p.factory.blank_state(addr=main)
 # print("Stack set")
 
 # init.gdb.set_heap('assets/heap', heap_base=0x602000)
-# print("Heap set") 
+# print("Heap set")
 
 # # https://github.com/angr/simuvex/blob/efa097d4076401cbd48277223e1340d7c6dffbc1/simuvex/plugins/gdb.py#L97
 # # Some registers such as cs, ds, eflags etc. aren't supported in Angr
