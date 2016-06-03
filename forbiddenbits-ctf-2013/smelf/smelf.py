@@ -26,7 +26,7 @@ argv=['smelf.bin', init.se.BVS('arg1', PASS_LEN * 8)]
 
 init.memory.store(0xd0000000, argv[0])
 init.memory.store(flag_addr, argv[1])
-init.regs.rdi = 0xd0000010
+init.regs.rdi = flag_addr
 init.regs.rsi = 0xd0000000
 
 def fast_strlen(state):
