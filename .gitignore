@@ -62,3 +62,5 @@ target/
 .ipynb_checkpoints
 .gdb_*
 peda*
+*.id2
+*.til
