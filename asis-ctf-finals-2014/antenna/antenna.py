@@ -1,12 +1,18 @@
+
+# coding: utf-8
+
+# In[ ]:
+
 import angr
 import simuvex
 import logging
 
-"""
-ANTENNA - ASISCTF Finals 2014 - Antenna
-WIP
-@author: P1kachu
-"""
+# ANTENNA - ASISCTF Finals 2014 - Antenna
+# WIP
+# @author: P1kachu 
+
+
+# In[ ]:
 
 win            = 0x400fe3  # Prints "good try"
 fail           = 0x400f9b  # Prints "sorry"
@@ -20,6 +26,8 @@ PASS_LEN       = 152
 find           = (win,)
 avoid          = (fail,)
 
+
+# In[ ]:
 
 def hook_strlen(state):
     state.regs.rax = PASS_LEN
@@ -40,7 +48,9 @@ def hook_fgets_printf(state):
 
 def hook_gmpz(state):
 
-    LEN = 0x200 # Completely arbitrary, don't know how to guess it
+    LEN = 1008 # Completely arbitrary, don't know how to guess it
+               # 0x400dc1 comparison ?
+               # God I'm gonna need more RAM
 
     state.mem[0x2000:] = state.se.BVS('pass', LEN * 8)
 
@@ -59,6 +69,8 @@ def hook_gmpz(state):
     # state.add_constraints(state.regs.rax == expected)
 
 
+# In[ ]:
+
 # use_sim_procedure - Whether to replace resolved
 #                     dependencies for which
 #                     simprocedures are available
@@ -67,6 +79,8 @@ def hook_gmpz(state):
 # p = angr.Project('antena', load_options={"auto_load_libs": False})
 p = angr.Project('antena_bffb7c0bfe9d5eac2e1364ce7ceb995e')
 
+
+# In[ ]:
 
 # Lazy solves: LAZY_SOLVES should be disabled
 #              sometimes to avoid creating too
@@ -91,7 +105,33 @@ p.hook(0x400c7f, func=hook_gmpz_strlen, length=5)
 #p.hook(check_flag_end, func=hook_retval, length=3)
 
 
+# In[ ]:
 
 pgp = p.factory.path_group(init, threads=8)
-x = pgp.explore(find=find, avoid=avoid)
+x = pgp.step()
+print(dir(pgp))
 print(x)
+
+# while x.active[0].addr != 0x400faf:
+#     x = pgp.step()
+    
+# while x.active[0].addr != 0x400c65:
+#     x = pgp.step()
+#     print(hex(x.active[0].addr))
+
+
+# In[ ]:
+
+# Now stuff becomes tricky
+while x.active[0].addr < 0x400f3f:
+    x = pgp.explore(n=100, find=find, avoid=avoid)
+    print(x)
+    print(x.active)
+    print(x.active[0].state.se.constraints)
+
+
+# In[ ]:
+
+for step in x.active[0].trace:
+    print(step)
+
