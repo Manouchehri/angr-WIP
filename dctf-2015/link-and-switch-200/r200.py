@@ -22,7 +22,7 @@ main = 0x400886
 # heap_end    = 0x623000
 # breakpoint  = 0x400909
 
-path_types = [ 
+path_types = [
     'avoid',
     'errored',
     'deadended',
@@ -38,7 +38,7 @@ def get_length(state):
     flag_addr = state.regs.rax
     print(flag_addr)
     state.regs.rsi = 8
-    
+
 def print_paths(ex, trace=False):
     for p_type in path_types:
         for path in getattr(ex, p_type):
@@ -49,7 +49,7 @@ def print_paths(ex, trace=False):
             if trace:
                 for step in path.trace:
                     print(step)
-            
+
 def parse_regs(regs_dump):
     reg = re.compile(r'[\S]*')
     val = re.compile(r'0x[\w]*')
@@ -70,7 +70,7 @@ def check_regs(registers, state):
             # Some registers such as cs, ds, eflags etc. aren't supported in Angr
             # https://github.com/angr/simuvex/blob/master/simuvex/plugins/gdb.py#L97
             continue
-        assert r.args[0] == y, "{0} don't match ({1}, {2})".format(x, r.args[0], y)
+        assert r.args[0] == y, "{0} doesn't match ({1}, {2})".format(x, r.args[0], y)
     print('Registers OK')
 
 
