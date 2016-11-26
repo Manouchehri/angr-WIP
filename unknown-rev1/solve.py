@@ -19,7 +19,7 @@ def main():
 
     # Make the first few chars printable
     for _ in xrange(10):
-	      k = initial_state.posix.files[0].read_from(1)
+        k = initial_state.posix.files[0].read_from(1)
         initial_state.se.add(k >= ord('A'))
         initial_state.se.add(k <= ord('z'))    
 
