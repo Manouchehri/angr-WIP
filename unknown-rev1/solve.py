@@ -20,15 +20,11 @@ def main():
 
     initial_state.posix.files[0].seek(0) # Reset back to the first char
 
-    # Make the first few chars printable
-    #for _ in xrange(10):
-#   k = initial_state.posix.files[0].read_from(1)
-#        initial_state.se.add(k >= ord('A'))
-#        initial_state.se.add(k <= ord('z'))    
-
-
-    # k = initial_state.posix.files[0].read_from(1) # Reset
-    # initial_state.se.add(k == 10) # Force a newline.
+    # Make the first few chars in the range we want
+    # for _ in xrange(10):
+    #     k = initial_state.posix.files[0].read_from(1)
+    #     initial_state.se.add(k >= ord('A'))
+    #     initial_state.se.add(k <= ord('z'))    
 
     initial_state.posix.files[0].seek(0)
     initial_state.posix.files[0].length = 32
@@ -36,11 +32,10 @@ def main():
     initial_path = proj.factory.path(initial_state)
     path_group = proj.factory.path_group(initial_state)
     
-    path_group.explore(find=0x8048568, avoid={0x0804846E, 0x80486ca})
+    path_group.explore(find=0x8048568, avoid={0x0804846e, 0x80486ca})
 
-    found = path_group.found[0] # In our case, there's only one printable solution.
-    solution = found.state.posix.dumps(0)
-    # solution = fetch[:fetch.find("}")+1] # Trim off the null bytes at the end of the flag (if any).
+    found = path_group.found[0] # In our case, there's only one printable solution we want.
+    solution = found.state.posix.dumps(0).split()[0] # Grab the input and strip off everything after the newline
     return solution
 
 def test():
@@ -48,3 +43,4 @@ def test():
 
 if __name__ == '__main__':
     print(repr(main()))
+
