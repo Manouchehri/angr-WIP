@@ -18,7 +18,7 @@ def main():
     k = initial_state.posix.files[0].read_from(1) # Reset
     initial_state.se.add(k == 10) # Force a newline.
 
-    initial_state.posix.files[0].seek(0) # Reset back to the first char
+    # initial_state.posix.files[0].seek(0) # Reset back to the first char
 
     # Make the first few chars in the range we want
     # for _ in xrange(10):
