@@ -10,18 +10,21 @@ def main():
     initial_state = proj.factory.entry_state(args=["./rev1"]) 
 
     # Force all the chars to be within the expected ASCII values
-    for _ in xrange(30):
+    for _ in xrange(31):
         k = initial_state.posix.files[0].read_from(1)
         initial_state.se.add(k >= ord(' '))
         initial_state.se.add(k <= ord('~'))
 
+    k = initial_state.posix.files[0].read_from(1) # Reset
+    initial_state.se.add(k == 10) # Force a newline.
+
     initial_state.posix.files[0].seek(0) # Reset back to the first char
 
     # Make the first few chars printable
-    for _ in xrange(10):
-        k = initial_state.posix.files[0].read_from(1)
-        initial_state.se.add(k >= ord('A'))
-        initial_state.se.add(k <= ord('z'))    
+    #for _ in xrange(10):
+#   k = initial_state.posix.files[0].read_from(1)
+#        initial_state.se.add(k >= ord('A'))
+#        initial_state.se.add(k <= ord('z'))    
 
 
     # k = initial_state.posix.files[0].read_from(1) # Reset
@@ -37,9 +40,6 @@ def main():
 
     found = path_group.found[0] # In our case, there's only one printable solution.
     solution = found.state.posix.dumps(0)
-    print(repr(solution))
-    from IPython import embed
-    embed() # Help? 
     # solution = fetch[:fetch.find("}")+1] # Trim off the null bytes at the end of the flag (if any).
     return solution
 
@@ -48,4 +48,3 @@ def test():
 
 if __name__ == '__main__':
     print(repr(main()))
-
