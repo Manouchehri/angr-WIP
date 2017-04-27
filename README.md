@@ -9,7 +9,7 @@ by angr.
 | [ForbiddenBits - Smelf](./forbiddenbits-ctf-2013/smelf) | Can't find a way to print the solution |
 | [HackluCTF - ELF-400](hackluctf-2013/elf-400) | Can't find a way to print the solution |
 | [PlaidCTF - mess](./plaidctf-2013/mess) | Can't find a way to print the solution |
-| [PlaidCTF17 - no_mo_flo](./plaidctf-2017/no_mo_flo) | I need to access state.regs.rflags |
+| [PlaidCTF17 - no_mo_flo](./plaidctf-2017/no_mo_flo) | Path explosion |
 
 If you find yourself stuck on a resolution with angr, feel free to submit a pull
 request with your exercise and what you have done so that others can try to help

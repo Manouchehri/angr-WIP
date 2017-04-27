@@ -4,6 +4,7 @@
 
 import angr
 from simuvex.procedures.stubs.UserHook import UserHook
+from simuvex.engines.vex import ccall
 
 p = angr.Project('no_flo_f51e2f24345e094cd2080b7b690f69fb.bin')
 
@@ -15,8 +16,9 @@ avoid = (0x4027f8, 0x40071d, 0x40077a, 0x4007d7, 0x400834, 0x400894, 0x4008f4,
 0x4016c0, 0x4017c2, 0x4018c4, 0x4019cd, 0x401ab7, 0x401bb9, 0x401cc5, 0x401db2,
 0x401eba, 0x401fbc, 0x4020c2, 0x4021c4, 0x4022cb, 0x4023ba, 0x4024bc, 0x4025c3,
 0x4026b2)
+avoid = [] # TOO MUCH AVOID
 
-# Jumps emulation
+# Jumps emulation (SIGFPE handler calls patching)
 hooks = (0x400f52, 0x400fc7, 0x401059, 0x4010ce, 0x40115b, 0x4011d0, 0x40125d,
 0x4012d2, 0x401365, 0x4013da, 0x401473, 0x4014e8, 0x401575, 0x4015ea, 0x40165f,
 0x4016d4, 0x401761, 0x4017d6, 0x401863, 0x4018d8, 0x40196c, 0x4019e1, 0x401a56,
@@ -71,9 +73,11 @@ batard_ops = {
 }
 
 def batard_op(state):
-    rflags = state.regs.rflags # WE NEED rflags HERE
+    print("In SIGFPE handler ($rip = {0})".format(state.regs.rip))
+    flags = ccall._get_flags(state)[0]
+
     op = state.se.eval(state.regs.r11, 1)[0]
-    if batard_ops[op](state.se.eval(state.regs.rflags, 1)[0]):
+    if batard_ops[op](state.se.eval(flags, 1)[0]):
         state.regs.rip = state.regs.r10
 
 block_size = 0x400fb3 - 0x400f52
@@ -87,5 +91,7 @@ ex = pgp.explore(find=find, avoid=avoid)
 
 
 print(ex)
+for path in ex.avoid:
+    print(path.state.regs.rip)
 print(ex.found[0].state.se.any_str(ex.found[0].state.memory.load(flag_addr, 100)))
 
